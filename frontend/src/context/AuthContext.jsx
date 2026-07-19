@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await api.post("/auth/logout");
     } catch (err) {
-      // ignore network errors on logout
+     
     }
     localStorage.removeItem("sb_token");
     setUser(null);
