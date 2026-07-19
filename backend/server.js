@@ -15,8 +15,7 @@ import userRoutes from "./routes/userRoutes.js";
 import buildingRoutes from "./routes/buildingRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import auditRoutes from "./routes/auditRoutes.js";
-import nocApplicationRoutes from "./routes/nocApplicationRoutes.js";
-import certificateRoutes from "./routes/certificateRoutes.js";
+import assetRoutes from "./routes/assetRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -61,8 +60,9 @@ app.use("/api/users", userRoutes);
 app.use("/api/buildings", buildingRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/audits", auditRoutes);
-app.use("/api/noc-applications", nocApplicationRoutes);
-app.use("/api/certificates", certificateRoutes);
+app.use("/api/assets", assetRoutes);
+
+
 
 app.use(notFound);
 app.use(errorHandler);

@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
   Building2,
+  Wrench,
   ClipboardCheck,
   CalendarDays,
   FileCheck2,
@@ -20,6 +21,7 @@ import { useAuth, ROLES } from "../../context/AuthContext.jsx";
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/buildings", label: "Buildings", icon: Building2 },
+  { to: "/assets", label: "Assets & Safety Equipment", icon: Wrench },
   { to: "/audits", label: "Safety Audits", icon: ClipboardCheck },
   { to: "/calendar", label: "Inspection Calendar", icon: CalendarDays },
   { to: "/noc-applications", label: "NOC Applications", icon: FileCheck2 },

@@ -13,6 +13,8 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Buildings from "./pages/Buildings.jsx";
 import BuildingDetails from "./pages/BuildingDetails.jsx";
+import Assets from "./pages/Assets.jsx";
+import AssetDetails from "./pages/AssetDetails.jsx";
 import SafetyAudits from "./pages/SafetyAudits.jsx";
 import AuditDetails from "./pages/AuditDetails.jsx";
 import ComingSoon from "./components/ui/ComingSoon.jsx";
@@ -40,6 +42,8 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/buildings" element={<Buildings />} />
         <Route path="/buildings/:id" element={<BuildingDetails />} />
+        <Route path="/assets" element={<Assets />} />
+        <Route path="/assets/:id" element={<AssetDetails />} />
         <Route path="/audits" element={<SafetyAudits />} />
         <Route path="/audits/:id" element={<AuditDetails />} />
         <Route path="/calendar" element={<ComingSoon title="Inspection Calendar" />} />

@@ -41,6 +41,40 @@ export const inspectionSchema = z.object({
   scheduledDate: z.string().min(1, "Scheduled date is required"),
 });
 
+export const EQUIPMENT_CATEGORIES = [
+  "fire_alarm",
+  "smoke_detector",
+  "fire_extinguisher",
+  "sprinkler_system",
+  "emergency_lights",
+  "exit_signage",
+  "lift",
+  "generator",
+  "electrical_panel",
+  "cctv",
+  "access_control",
+  "gas_detector",
+  "water_pump",
+  "hvac",
+  "emergency_exit_door",
+  "medical_equipment",
+  "structural_sensors",
+];
+
+export const assetSchema = z.object({
+  name: z.string().min(2, "Equipment name is required"),
+  category: z.enum(EQUIPMENT_CATEGORIES),
+  building: z.string().min(1, "Please select a building"),
+  floor: z.string().optional(),
+  location: z.string().optional(),
+  manufacturer: z.string().optional(),
+  model: z.string().optional(),
+  serialNumber: z.string().optional(),
+  installationDate: z.string().optional(),
+  warrantyExpiry: z.string().optional(),
+  nextInspectionDate: z.string().optional(),
+});
+
 export const resetPasswordSchema = z
   .object({
     password: z.string().min(8, "Password must be at least 8 characters"),
