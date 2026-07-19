@@ -7,19 +7,41 @@ import { ROLES } from "../config/constants.js";
 // @desc    List buildings (owners see only their own; admins/auditors see all)
 // @route   GET /api/buildings
 // @access  Private
+const SORT_OPTIONS = {
+  newest: { createdAt: -1 },
+  oldest: { createdAt: 1 },
+  highest_risk: { riskScore: -1 },
+  recently_inspected: { lastInspectionDate: -1 },
+  alphabetical: { name: 1 },
+};
+
 export const getBuildings = asyncHandler(async (req, res) => {
-  const { search, riskLevel, safetyStatus, district, page = 1, limit = 20 } = req.query;
+  const {
+    search,
+    type,
+    riskLevel,
+    safetyStatus,
+    certificateStatus,
+    district,
+    city,
+    sort = "newest",
+    page = 1,
+    limit = 12,
+  } = req.query;
 
   const query = { isActive: true };
   if (req.user.role === ROLES.OWNER) query.owner = req.user.id;
+  if (type) query.type = type;
   if (riskLevel) query.riskLevel = riskLevel;
   if (safetyStatus) query.safetyStatus = safetyStatus;
+  if (certificateStatus) query.certificateStatus = certificateStatus;
   if (district) query["address.district"] = district;
+  if (city) query["address.city"] = city;
   if (search) query.$text = { $search: search };
 
   const buildings = await Building.find(query)
     .populate("owner", "name email phone")
-    .sort({ createdAt: -1 })
+    .sort(SORT_OPTIONS[sort] || SORT_OPTIONS.newest)
     .skip((page - 1) * limit)
     .limit(Number(limit));
 
@@ -112,6 +134,22 @@ export const updateBuilding = asyncHandler(async (req, res) => {
     action: "BUILDING_UPDATED",
     entity: { kind: "Building", id: building._id },
   });
+
+  res.status(200).json({ success: true, building });
+});
+
+// @desc    Toggle favorite/bookmark on a building
+// @route   PUT /api/buildings/:id/favorite
+// @access  Private
+export const toggleFavorite = asyncHandler(async (req, res) => {
+  const building = await Building.findById(req.params.id);
+  if (!building) {
+    res.status(404);
+    throw new Error("Building not found");
+  }
+
+  building.isFavorite = !building.isFavorite;
+  await building.save();
 
   res.status(200).json({ success: true, building });
 });

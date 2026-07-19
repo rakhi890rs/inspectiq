@@ -5,6 +5,7 @@ import {
   createBuilding,
   updateBuilding,
   deleteBuilding,
+  toggleFavorite,
 } from "../controllers/buildingController.js";
 import { protect } from "../middleware/auth.js";
 import { authorize } from "../middleware/role.js";
@@ -24,5 +25,7 @@ router
   .get(getBuilding)
   .put(authorize(ROLES.OWNER, ROLES.SUPER_ADMIN, ROLES.AUDITOR), updateBuilding)
   .delete(authorize(ROLES.OWNER, ROLES.SUPER_ADMIN), deleteBuilding);
+
+router.put("/:id/favorite", toggleFavorite);
 
 export default router;

@@ -9,13 +9,14 @@ const buildingSchema = new mongoose.Schema(
 
     type: {
       type: String,
-      enum: ["residential", "commercial", "industrial", "institutional", "mixed_use"],
+      enum: ["residential", "commercial", "industrial", "hospital", "school", "government"],
       default: "commercial",
     },
     numberOfFloors: { type: Number, default: 1 },
     totalArea: { type: Number }, // sq ft
     yearBuilt: { type: Number },
     occupancy: { type: Number },
+    emergencyExits: { type: Number, default: 0 },
 
     address: {
       line1: String,
@@ -44,6 +45,13 @@ const buildingSchema = new mongoose.Schema(
       enum: ["compliant", "non_compliant", "under_review", "pending"],
       default: "pending",
     },
+    certificateStatus: {
+      type: String,
+      enum: ["certified", "pending", "expired", "under_inspection"],
+      default: "pending",
+    },
+    lastInspectionDate: { type: Date },
+    isFavorite: { type: Boolean, default: false },
 
     qrCode: { type: String }, // data URL / cloudinary URL for QR verification
 

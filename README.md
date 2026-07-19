@@ -118,3 +118,4 @@ safebuild-ai/
 Tell me which module to build next (Buildings management UI, Safety Audits
 checklist, or NOC workflow are the natural next pieces), and it'll be built
 end-to-end: API + UI + validation, following this same foundation.
+
