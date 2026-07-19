@@ -11,11 +11,10 @@ import {
   Download,
 } from "lucide-react";
 import api from "../api/axios.js";
-import BuildingCard from "../components/buildings/BuildingCard.jsx";
-import BuildingCardSkeleton from "../components/buildings/BuildingCardSkeleton.jsx";
-import BuildingsEmptyState from "../components/buildings/BuildingsEmptyState.jsx";
-import RegisterBuildingModal from "../components/buildings/RegisterBuildingModal.jsx";
-
+import BuildingCard from "../components/Buildings/BuildingCard.jsx";
+import BuildingCardSkeleton from "../components/Buildings/BuildingCardSkeleton.jsx";
+import BuildingsEmptyState from "../components/Buildings/BuildingsEmptyState.jsx";
+import RegisterBuildingModal from "../components/Buildings/RegisterBuildingModal.jsx";
 const typeFilters = [
   { value: "", label: "All Types" },
   { value: "residential", label: "Residential" },
