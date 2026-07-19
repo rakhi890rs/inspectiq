@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://inspectiq-qqsv.onrender.com/api/$1"
+    }
+  ]
+}
