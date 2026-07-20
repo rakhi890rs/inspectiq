@@ -20,6 +20,8 @@ const certificateSchema = new mongoose.Schema(
       default: "active",
     },
 
+    safetyScore: { type: Number, min: 0, max: 100 },
+
     verificationCount: { type: Number, default: 0 }, // times the QR was scanned/verified
   },
   { timestamps: true }

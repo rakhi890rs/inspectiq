@@ -17,6 +17,7 @@ import Assets from "./pages/Assets.jsx";
 import AssetDetails from "./pages/AssetDetails.jsx";
 import SafetyAudits from "./pages/SafetyAudits.jsx";
 import AuditDetails from "./pages/AuditDetails.jsx";
+import Certificates from "./pages/Certificates.jsx";
 import ComingSoon from "./components/ui/ComingSoon.jsx";
 import { ROLES } from "./context/AuthContext.jsx";
 
@@ -49,7 +50,7 @@ function App() {
         <Route path="/calendar" element={<ComingSoon title="Inspection Calendar" />} />
         <Route path="/noc-applications" element={<ComingSoon title="NOC Applications" />} />
         <Route path="/documents" element={<ComingSoon title="Documents" />} />
-        <Route path="/certificates" element={<ComingSoon title="Certificates" />} />
+        <Route path="/certificates" element={<Certificates />} />
         <Route path="/reports" element={<ComingSoon title="Reports" />} />
         <Route path="/analytics" element={<ComingSoon title="Analytics" />} />
         <Route path="/notifications" element={<ComingSoon title="Notifications" />} />

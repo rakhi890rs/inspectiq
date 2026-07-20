@@ -1,52 +1,87 @@
 import asyncHandler from "express-async-handler";
+import QRCode from "qrcode";
 import Certificate from "../models/Certificate.js";
 import Building from "../models/Building.js";
-import NOCApplication from "../models/NOCApplication.js";
-import { NOC_STATUS, ROLES } from "../config/constants.js";
+import Log from "../models/Log.js";
+import { ROLES } from "../config/constants.js";
 
-const populateCertificate = (query) => query.populate("building", "name buildingCode address owner").populate("issuedBy", "name email").populate("nocApplication", "applicationNumber status");
-
+// @desc    List certificates (owners see only their own buildings' certificates)
+// @route   GET /api/certificates
+// @access  Private
 export const getCertificates = asyncHandler(async (req, res) => {
   const query = {};
-  if (req.query.status) query.status = req.query.status;
-  if (req.query.building) query.building = req.query.building;
+
   if (req.user.role === ROLES.OWNER) {
-    const buildings = await Building.find({ owner: req.user.id }).select("_id");
-    query.building = { $in: buildings.map(({ _id }) => _id) };
+    const ownedBuildings = await Building.find({ owner: req.user.id }).select("_id");
+    query.building = { $in: ownedBuildings.map((b) => b._id) };
   }
-  const certificates = await populateCertificate(Certificate.find(query).sort({ validUntil: 1 }));
-  res.json({ success: true, count: certificates.length, certificates });
+
+  // Keep status accurate: flip anything past its validUntil date to "expired"
+  await Certificate.updateMany(
+    { status: "active", validUntil: { $lt: new Date() } },
+    { status: "expired" }
+  );
+
+  const certificates = await Certificate.find(query)
+    .populate("building", "name buildingCode")
+    .populate("issuedBy", "name")
+    .sort({ createdAt: -1 });
+
+  res.status(200).json({ success: true, count: certificates.length, certificates });
 });
 
-export const getCertificate = asyncHandler(async (req, res) => {
-  const certificate = await populateCertificate(Certificate.findById(req.params.id));
-  if (!certificate) { res.status(404); throw new Error("Certificate not found"); }
-  if (req.user.role === ROLES.OWNER && certificate.building.owner.toString() !== req.user.id) { res.status(403); throw new Error("Not authorized to view this certificate"); }
-  res.json({ success: true, certificate });
-});
+// @desc    Issue a new certificate
+// @route   POST /api/certificates
+// @access  Private (super_admin, auditor)
+export const createCertificate = asyncHandler(async (req, res) => {
+  const { building, validUntil, safetyScore } = req.body;
 
-export const issueCertificate = asyncHandler(async (req, res) => {
-  const { building, nocApplication, validUntil, pdfUrl, qrCodeUrl, digitalSignatureUrl } = req.body;
-  if (!building || !validUntil) { res.status(400); throw new Error("Building and valid-until date are required"); }
-  const certificate = await Certificate.create({ building, nocApplication, validUntil, pdfUrl, qrCodeUrl, digitalSignatureUrl, issuedBy: req.user.id });
-  await Building.findByIdAndUpdate(building, { certificateStatus: "certified" });
-  if (nocApplication) await NOCApplication.findByIdAndUpdate(nocApplication, { certificate: certificate._id, status: NOC_STATUS.CERTIFICATE_ISSUED, decidedAt: new Date() });
-  res.status(201).json({ success: true, certificate });
-});
+  if (!building || !validUntil) {
+    res.status(400);
+    throw new Error("Building and validity date are required");
+  }
 
-export const updateCertificate = asyncHandler(async (req, res) => {
-  const updates = {};
-  ["validUntil", "status", "pdfUrl", "qrCodeUrl", "digitalSignatureUrl"].forEach((field) => { if (req.body[field] !== undefined) updates[field] = req.body[field]; });
-  const certificate = await Certificate.findByIdAndUpdate(req.params.id, updates, { new: true, runValidators: true });
-  if (!certificate) { res.status(404); throw new Error("Certificate not found"); }
-  if (updates.status === "expired" || updates.status === "revoked") await Building.findByIdAndUpdate(certificate.building, { certificateStatus: "expired" });
-  res.json({ success: true, certificate });
-});
+  const certificate = await Certificate.create({
+    building,
+    validUntil,
+    safetyScore,
+    issuedBy: req.user.id,
+  });
 
-export const verifyCertificate = asyncHandler(async (req, res) => {
-  const certificate = await populateCertificate(Certificate.findOne({ certificateNumber: req.params.certificateNumber }));
-  if (!certificate) { res.status(404); throw new Error("Certificate not found"); }
-  certificate.verificationCount += 1;
+  const verifyUrl = `${process.env.CLIENT_URL}/verify/certificate/${certificate.certificateNumber}`;
+  certificate.qrCodeUrl = await QRCode.toDataURL(verifyUrl);
   await certificate.save();
-  res.json({ success: true, valid: certificate.status === "active" && certificate.validUntil >= new Date(), certificate });
+
+  await Log.create({
+    user: req.user.id,
+    action: "CERTIFICATE_ISSUED",
+    entity: { kind: "Certificate", id: certificate._id },
+  });
+
+  const populated = await Certificate.findById(certificate._id)
+    .populate("building", "name buildingCode")
+    .populate("issuedBy", "name");
+
+  res.status(201).json({ success: true, certificate: populated });
+});
+
+// @desc    Revoke/delete a certificate
+// @route   DELETE /api/certificates/:id
+// @access  Private (super_admin, auditor)
+export const deleteCertificate = asyncHandler(async (req, res) => {
+  const certificate = await Certificate.findById(req.params.id);
+  if (!certificate) {
+    res.status(404);
+    throw new Error("Certificate not found");
+  }
+
+  await certificate.deleteOne();
+
+  await Log.create({
+    user: req.user.id,
+    action: "CERTIFICATE_DELETED",
+    entity: { kind: "Certificate", id: certificate._id },
+  });
+
+  res.status(200).json({ success: true, message: "Certificate removed" });
 });
