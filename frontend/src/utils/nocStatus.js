@@ -1,0 +1,19 @@
+export const NOC_STATUS = {
+  SUBMITTED: "submitted",
+  VERIFICATION: "verification",
+  INSPECTION: "inspection",
+  APPROVED: "approved",
+  REJECTED: "rejected",
+  CERTIFICATE_ISSUED: "certificate_issued",
+};
+
+// Maps each status to the statuses it can legally move to next,
+// mirroring the backend's ALLOWED_TRANSITIONS.
+export const ALLOWED_TRANSITIONS = {
+  [NOC_STATUS.SUBMITTED]: [NOC_STATUS.VERIFICATION, NOC_STATUS.REJECTED],
+  [NOC_STATUS.VERIFICATION]: [NOC_STATUS.INSPECTION, NOC_STATUS.REJECTED],
+  [NOC_STATUS.INSPECTION]: [NOC_STATUS.APPROVED, NOC_STATUS.REJECTED],
+  [NOC_STATUS.APPROVED]: [NOC_STATUS.CERTIFICATE_ISSUED],
+  [NOC_STATUS.REJECTED]: [],
+  [NOC_STATUS.CERTIFICATE_ISSUED]: [],
+};

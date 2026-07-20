@@ -18,6 +18,8 @@ import AssetDetails from "./pages/AssetDetails.jsx";
 import SafetyAudits from "./pages/SafetyAudits.jsx";
 import AuditDetails from "./pages/AuditDetails.jsx";
 import Certificates from "./pages/Certificates.jsx";
+import NOCApplications from "./pages/NOCApplications.jsx";
+import NOCApplicationDetails from "./pages/NOCApplicationDetails.jsx";
 import ComingSoon from "./components/ui/ComingSoon.jsx";
 import { ROLES } from "./context/AuthContext.jsx";
 
@@ -48,7 +50,8 @@ function App() {
         <Route path="/audits" element={<SafetyAudits />} />
         <Route path="/audits/:id" element={<AuditDetails />} />
         <Route path="/calendar" element={<ComingSoon title="Inspection Calendar" />} />
-        <Route path="/noc-applications" element={<ComingSoon title="NOC Applications" />} />
+        <Route path="/noc-applications" element={<NOCApplications />} />
+        <Route path="/noc-applications/:id" element={<NOCApplicationDetails />} />
         <Route path="/documents" element={<ComingSoon title="Documents" />} />
         <Route path="/certificates" element={<Certificates />} />
         <Route path="/reports" element={<ComingSoon title="Reports" />} />

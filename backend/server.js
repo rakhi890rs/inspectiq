@@ -17,6 +17,7 @@ import dashboardRoutes from "./routes/dashboardRoutes.js";
 import auditRoutes from "./routes/auditRoutes.js";
 import assetRoutes from "./routes/assetRoutes.js";
 import certificateRoutes from "./routes/certificateRoutes.js";
+import nocRoutes from "./routes/nocRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -63,8 +64,9 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/audits", auditRoutes);
 app.use("/api/assets", assetRoutes);
 app.use("/api/certificates", certificateRoutes);
+app.use("/api/noc-applications", nocRoutes);
 
-// TODO (next build phase): noc-applications,
+// TODO (next build phase):
 // documents, notifications, reports, analytics, ai routes.
 
 app.use(notFound);

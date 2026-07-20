@@ -23,6 +23,13 @@ const styleMap = {
   needs_service: "bg-warning/20 text-yellow-700",
   maintenance_scheduled: "bg-blue-100 text-blue-700",
   out_of_service: "bg-gray-200 text-gray-600",
+  // NOC application status
+  submitted: "bg-blue-100 text-blue-700",
+  verification: "bg-primary/10 text-primary",
+  inspection: "bg-primary/10 text-primary",
+  approved: "bg-success/10 text-success",
+  rejected: "bg-danger/10 text-danger",
+  certificate_issued: "bg-success/10 text-success",
 };
 
 const labelMap = {
@@ -40,11 +47,17 @@ const labelMap = {
   pending_review: "Pending Review",
   failed: "Failed",
   cancelled: "Cancelled",
-  // asset condition
   operational: "Operational",
   needs_service: "Needs Service",
   maintenance_scheduled: "Maintenance Scheduled",
   out_of_service: "Out of Service",
+  // NOC application status
+  submitted: "Submitted",
+  verification: "Verification",
+  inspection: "Inspection",
+  approved: "Approved",
+  rejected: "Rejected",
+  certificate_issued: "Certificate Issued",
 };
 
 const Badge = ({ value, className = "" }) => {
